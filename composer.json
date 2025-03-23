@@ -1,0 +1,17 @@
+{
+    "name": "dealhave/api",
+    "description": "A basic PHP API structure",
+    "type": "project",
+    "require": {
+        "php": "^7.4|^8.0",
+        "slim/slim": "^4.11",
+        "slim/psr7": "^1.6",
+        "php-di/php-di": "^6.4",
+        "vlucas/phpdotenv": "^5.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src/"
+        }
+    }
+}
