@@ -1,16 +1,16 @@
 <?php
 
-nomespace App\Controllers;
+namespace App\Controllers;
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use App\Models\Product;
 
-class ProductController{
+class ProductController {
     private $vProductModel;
 
     // Constructor: initializes the Product model
-    public function __construct(){
+    public function __construct() {
         $this->vProductModel = new Product();
     }
 
@@ -22,7 +22,7 @@ class ProductController{
     }
 
     public function getOne(Request $pRequest, Response $pResponse, array $pArgs){
-        $vProduct = $this->vProductModel->getOne($pArgs['id']);
+        $vProduct = $this->vProductModel->find($pArgs['id']); 
         if(!$vProduct){
             $pResponse->getBody()->write(json_encode(['message' => 'Product not found']));
             return $pResponse->withStatus(404)->withHeader('Content-Type', 'application/json');
@@ -34,21 +34,19 @@ class ProductController{
 
     public function create(Request $pRequest, Response $pResponse, array $pArgs){
         $vData = $pRequest->getParsedBody();
-        $vId = $pArgs['id'];
+        // Removed the line that incorrectly retrieves an ID from $pArgs
         if(!isset($vData['name']) || !isset($vData['description']) || !isset($vData['price'])){
             $pResponse->getBody()->write(json_encode(['message' => 'Missing data']));
             return $pResponse->withStatus(400)->withHeader('Content-Type', 'application/json'); 
         }
-        $vSuccess = $this->vProductModel->update($vId, $vData);
+        $vSuccess = $this->vProductModel->create($vData); // Assuming there's a create method in the model
         if(!$vSuccess){
-            $pResponse->getBody()->write(json_encode(['message' => 'Product not found']));
-            return $pResponse->withStatus(404)->withHeader('Content-Type', 'application/json');
+            $pResponse->getBody()->write(json_encode(['message' => 'Failed to create product']));
+            return $pResponse->withStatus(500)->withHeader('Content-Type', 'application/json');
         } else {
-            $pResponse->getBody()->write(json_encode(['message' => 'Product updated']));
+            $pResponse->getBody()->write(json_encode(['message' => 'Product created']));
             return $pResponse->withHeader('Content-Type', 'application/json');
         }
-
-        
     }
 
     public function update(Request $pRequest, Response $pResponse, array $pArgs){
